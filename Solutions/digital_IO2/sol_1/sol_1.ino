@@ -1,51 +1,37 @@
-int red_pin = 12;
-int yellow_pin = 13;
-int green_pin = 14;
+uint8_t LED_pins[3] = {12, 13, 14};
+uint8_t states[4][3] = {{1, 0, 0}, {1, 1, 0}, {0, 0, 1}, {0, 1, 0}};
+uint8_t stage = 0;
+
 int button_pin = 3;
 bool button_state;
 bool toggled = false;
-int state = 1;
 
 void setup() {
-  pinMode(red_pin, OUTPUT);
-  pinMode(yellow_pin, OUTPUT);
-  pinMode(green_pin, OUTPUT);
+  for(int i = 0; i < 3; i++){
+    pinMode(LED_pins[i], OUTPUT);
+  }
   pinMode(button_pin, INPUT_PULLDOWN);
 }
 
 void loop() {
-  if(state == 1)
-  {
-    digitalWrite(red_pin, true);
-    digitalWrite(yellow_pin, false);
-    digitalWrite(green_pin, false);
-  }
-  else if(state == 2)
-  {
-    digitalWrite(red_pin, false);
-    digitalWrite(yellow_pin, true);
-    digitalWrite(green_pin, false);
-  }
-  else if(state == 3)
-  {
-    digitalWrite(red_pin, false);
-    digitalWrite(yellow_pin, false);
-    digitalWrite(green_pin, true);
-  }
   button_state = digitalRead(button_pin);
   if(button_state)
   {
     if(!toggled)
     {
-      if(state < 3)
-        state = state + 1;
+      if(stage == 3)
+        stage = 0;
       else
-        state = 1;
+        stage++;
     }
     toggled = true;
   }
   else
   {
     toggled = false;
+  }
+
+  for(int i = 0; i < 3; i++){
+    digitalWrite(LED_pins[i], states[stage][i]);
   }
 }
